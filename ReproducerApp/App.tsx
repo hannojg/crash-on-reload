@@ -1,86 +1,117 @@
-import React, {useEffect, useState} from 'react';
+/**
+ * Sample React Native App
+ * https://github.com/facebook/react-native
+ *
+ * @format
+ */
+
+import React from 'react';
+import type {PropsWithChildren} from 'react';
 import {
+  SafeAreaView,
   ScrollView,
+  StatusBar,
   StyleSheet,
   Text,
-  TouchableOpacity,
+  useColorScheme,
   View,
 } from 'react-native';
-import {useTestRunner} from './Tests';
-import {TestWrapper} from './Tests/TestWrapper';
 
-const App = () => {
-  const {tests, categories, output, runTests, runSingleTest} = useTestRunner();
+import {
+  Colors,
+  DebugInstructions,
+  Header,
+  LearnMoreLinks,
+  ReloadInstructions,
+} from 'react-native/Libraries/NewAppScreen';
 
-  const [age, setAge] = useState(15);
+type SectionProps = PropsWithChildren<{
+  title: string;
+}>;
 
-  useEffect(() => {
-    setTimeout(() => setAge(a => a * 2), 2000);
-  }, []);
-
+function Section({children, title}: SectionProps): React.JSX.Element {
+  const isDarkMode = useColorScheme() === 'dark';
   return (
-    <View style={styles.container}>
-      <View style={styles.tests}>
-        <ScrollView
-          contentInsetAdjustmentBehavior="automatic"
-          contentContainerStyle={styles.testsScrollView}>
-          {categories.map(category => (
-            <React.Fragment key={category}>
-              <TouchableOpacity
-                onPress={() =>
-                  runTests(tests.filter(t => t.category === category))
-                }>
-                <Text style={styles.category}>{category}</Text>
-              </TouchableOpacity>
-              {tests
-                .filter(t => t.category === category)
-                .map(t => (
-                  <TestWrapper
-                    key={t.name}
-                    name={t.name}
-                    state={t.state}
-                    onRun={() => runSingleTest(t)}
-                  />
-                ))}
-            </React.Fragment>
-          ))}
-        </ScrollView>
-      </View>
-      <View style={styles.output}>
-        <ScrollView>
-          <Text style={styles.outputText}>{output.join('\n')}</Text>
-        </ScrollView>
-      </View>
+    <View style={styles.sectionContainer}>
+      <Text
+        style={[
+          styles.sectionTitle,
+          {
+            color: isDarkMode ? Colors.white : Colors.black,
+          },
+        ]}>
+        {title}
+      </Text>
+      <Text
+        style={[
+          styles.sectionDescription,
+          {
+            color: isDarkMode ? Colors.light : Colors.dark,
+          },
+        ]}>
+        {children}
+      </Text>
     </View>
   );
-};
+}
+
+function App(): React.JSX.Element {
+  const isDarkMode = useColorScheme() === 'dark';
+
+  const backgroundStyle = {
+    backgroundColor: isDarkMode ? Colors.darker : Colors.lighter,
+  };
+
+  return (
+    <SafeAreaView style={backgroundStyle}>
+      <StatusBar
+        barStyle={isDarkMode ? 'light-content' : 'dark-content'}
+        backgroundColor={backgroundStyle.backgroundColor}
+      />
+      <ScrollView
+        contentInsetAdjustmentBehavior="automatic"
+        style={backgroundStyle}>
+        <Header />
+        <View
+          style={{
+            backgroundColor: isDarkMode ? Colors.black : Colors.white,
+          }}>
+          <Section title="Step One">
+            Edit <Text style={styles.highlight}>App.tsx</Text> to change this
+            screen and then come back to see your edits.
+          </Section>
+          <Section title="See Your Changes">
+            <ReloadInstructions />
+          </Section>
+          <Section title="Debug">
+            <DebugInstructions />
+          </Section>
+          <Section title="Learn More">
+            Read the docs to discover what to do next:
+          </Section>
+          <LearnMoreLinks />
+        </View>
+      </ScrollView>
+    </SafeAreaView>
+  );
+}
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
+  sectionContainer: {
+    marginTop: 32,
+    paddingHorizontal: 24,
   },
-  tests: {
-    paddingTop: 34,
-    flex: 1,
+  sectionTitle: {
+    fontSize: 24,
+    fontWeight: '600',
   },
-  testsScrollView: {
-    paddingTop: 24,
-    paddingBottom: 40,
+  sectionDescription: {
+    marginTop: 8,
+    fontSize: 18,
+    fontWeight: '400',
   },
-  output: {
-    borderTopColor: '#CCC',
-    borderTopWidth: StyleSheet.hairlineWidth,
-    flex: 0.2,
-    backgroundColor: '#EFEFEF',
-  },
-  outputText: {
-    padding: 8,
-  },
-  category: {
-    paddingTop: 8,
-    paddingBottom: 4,
-    paddingHorizontal: 8,
-    textDecorationLine: 'underline',
+  highlight: {
+    fontWeight: '700',
   },
 });
 
